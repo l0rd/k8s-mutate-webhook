@@ -1,17 +1,27 @@
-# k8s-mutate-webhook
+# k8s-validate-webhook
+
+A fork of <https://github.com/alex-leonhardt/k8s-mutate-webhook> based on [this blog post](https://dev.to/ineedale/writing-a-very-basic-kubernetes-mutating-admission-webhook-5b1).
 
 A playground to try build a crude k8s mutating webhook; the goal is to mutate a Pod CREATE request to _always_ use a debian image and by doing this, learning more about
-the k8s api, objects, etc. - eventually figure out how scalable this is (could be made) if one had 1000 pods to schedule (concurrently) 
+the k8s api, objects, etc. - eventually figure out how scalable this is (could be made) if one had 1000 pods to schedule (concurrently)
 
-## build 
+## todo
 
-```
+1.
+
+## concerns
+
+1.
+
+## build
+
+```bash
 make
 ```
 
 ## test
 
-```
+```bash
 make test
 ```
 
@@ -21,16 +31,16 @@ the `ssl/` dir contains a script to create a self-signed certificate, not sure t
 
 _NOTE: the app expects the cert/key to be in `ssl/` dir relative to where the app is running/started and currently is hardcoded to `mutateme.{key,pem}`_
 
-```
-cd ssl/ 
-make 
+```bash
+cd ssl/
+make
 ```
 
 ## docker
 
 to create a docker image .. 
 
-```
+```bash
 make docker
 ```
 
@@ -40,15 +50,42 @@ don't forget to update `IMAGE_PREFIX` in the Makefile or set it when running `ma
 
 ### images
 
-[`alexleonhardt/k8s-mutate-webhook`](https://cloud.docker.com/repository/docker/alexleonhardt/k8s-mutate-webhook)
+[`mariolet/k8s-mutate-webhook`](https://cloud.docker.com/repository/docker/mariolet/k8s-mutate-webhook:latest)
 
+```bash
+docker push mariolet/k8s-mutate-webhook:latest
+```
 
+## deploy
+
+```bash
+# Deploy the webhook
+k apply -f deploy/webhook.yaml
+
+# k rollout restart -n default deploy mutateme
+
+# Setup a sample resource to validate
+k create namespace admission-test
+k patch namespace admission-test --patch '{"metadata": {"labels": {"mutateme": "disabled"}}}'
+k patch namespace admission-test --patch '{"metadata": {"labels": {"validateme": "enabled"}}}'
+kubens admission-test
+
+curl -sSL https://k8s.io/examples/application/deployment.yaml | yq . | jq '.spec.replicas = 1' | jq '.spec.template.metadata.labels.valid = "false"' | k apply -f -
+```
+
+## cleanup
+
+```bash
+k delete deploy nginx-deployment
+k delete namespace admission-test
+k delete -f deploy/
+```
 
 ## watcher
 
-useful during devving ... 
+useful during devving ...
 
-```
+```bash
 watcher -watch github.com/alex-leonhardt/k8s-mutate-webhook -run github.com/alex-leonhardt/k8s-mutate-webhook/cmd/
 ```
 
