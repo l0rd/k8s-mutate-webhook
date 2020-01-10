@@ -11,7 +11,7 @@ A playground to try build a the k8s mutating and validating webhook needed to de
 
 ## todo
 
-(0. Deploy a DevWorkspace CRD https://github.com/che-incubator/che-workspace-crd-operator/pull/3 and decide if that's worth using it or if we should use something simpler as https://github.com/l0rd/operator-hello-world)
+0. Deploy a DevWorkspace CRD https://github.com/che-incubator/che-workspace-crd-operator/pull/3 and decide if that's worth using it or if we should use something simpler as https://github.com/l0rd/operator-hello-world **DONE**
 1. Create a mutating webhook that adds OpenShift user details when a CR of type DevWorkspace is created
 2. Create a validating webhook that denies changes to the user details on the DevWorkspace CR
 3. Create a validating webhook that denies changes to the link to a DevWorkspace CR on a container meta (a label? an annotation?)

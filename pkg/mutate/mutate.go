@@ -10,6 +10,7 @@ import (
 	v1beta1 "k8s.io/api/admission/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	workspaces "github.com/che-incubator/che-workspace-crd-operator/pkg/apis"
 )
 
 // Mutate mutates
@@ -24,7 +25,7 @@ func Mutate(body []byte) ([]byte, error) {
 	}
 
 	var err error
-	var pod *corev1.Pod
+	var workspace *workspaces.Workspace
 
 	responseBody := []byte{}
 	ar := admReview.Request
@@ -32,9 +33,9 @@ func Mutate(body []byte) ([]byte, error) {
 
 	if ar != nil {
 
-		// get the Pod object and unmarshal it into its struct, if we cannot, we might as well stop here
-		if err := json.Unmarshal(ar.Object.Raw, &pod); err != nil {
-			return nil, fmt.Errorf("unable unmarshal pod json object %v", err)
+		// get the Workspace object and unmarshal it into its struct, if we cannot, we might as well stop here
+		if err := json.Unmarshal(ar.Object.Raw, &workspace); err != nil {
+			return nil, fmt.Errorf("unable unmarshal workspace json object %v", err)
 		}
 		// set response options
 		resp.Allowed = true

@@ -65,7 +65,7 @@ webhooks:
       - operations: ["CREATE"]
         apiGroups: [""]
         apiVersions: ["v1"]
-        resources: ["pods"]
+        resources: ["workspaces"]
     namespaceSelector:
       matchLabels:
         mutateme: enabled
@@ -87,7 +87,7 @@ webhooks:
         namespace: default
         path: "/validate"
     rules:
-      - operations: ["*"]
+      - operations: ["CONNECT"]
         apiGroups: [""]
         apiVersions: ["v1"]
         resources: ["pods/exec"]
